@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "weather-mcp-server": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/index.js",
+        "envPath=${workspaceFolder}/.env"
+      ]
+    }
+  }
+}
