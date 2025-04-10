@@ -41,9 +41,24 @@ export function createServer() {
         name: "Real Weather MCP Server", // 可以改個名字
         version: "0.1.2",
     });
-    server.tool("get_weather", "Get real-time weather info for a given city.", // 更新描述
+    server.tool("get_weather", "Get real-time weather info for a given city. The city name must be translated into English.", // 更新描述
     {
-        city: z.string().describe("The name of the city"), // 英文描述可能更通用
+        city: z.string().transform(async (city) => {
+            // 使用翻譯 API 或其他方法將城市名稱翻譯為英文
+            const translationApiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(city)}&langpair=zh-TW|en`;
+            try {
+                const response = await axios.get(translationApiUrl);
+                if (response.data && response.data.responseData && response.data.responseData.translatedText) {
+                    return response.data.responseData.translatedText;
+                } else {
+                    console.warn("Translation API did not return a valid response. Using original city name.");
+                    return city; // 如果翻譯失敗，回傳原始名稱
+                }
+            } catch (error) {
+                console.error("Error translating city name:", error.message);
+                return city; // 如果翻譯過程中出現錯誤，回傳原始名稱
+            }
+        }).describe("The name of the city (automatically translated to English)"),
     }, async ({ city }) => {
         // 檢查 API 金鑰是否存在
         if (!OPENWEATHERMAP_API_KEY) {
