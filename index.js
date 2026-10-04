@@ -5,12 +5,9 @@ async function main() {
     const server = createServer();
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    //console.debug("Weather MCP Server running on stdio");
-    // 👆Claude 報錯 "MCP weather: Unexpected token 'W', "Weather MC"... is not valid JSON"
-    // 👍所以這行 console.debug() 註解掉了就不會報錯了😁
+    // stdout 專供 MCP 協定使用；診斷訊息只能寫入 stderr。
 }
 main().catch((error) => {
-    console.error("Fatal error in main():", error);
+    console.error("Fatal error in main():", error.message);
     process.exit(1);
 });
-//# sourceMappingURL=index.js.map
